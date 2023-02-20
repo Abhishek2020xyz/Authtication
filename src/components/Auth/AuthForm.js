@@ -22,10 +22,13 @@ const submitHandler = (event) => {
 //optional: Addvalidation
 
 setIsLoading(true);
+let url;
 if(isLogin){
-
+url='https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCcDNxwm_rDXN068U1-nrHh3QKnnEGtZbY'
 } else{
-  fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCcDNxwm_rDXN068U1-nrHh3QKnnEGtZbY',{
+  url='https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCcDNxwm_rDXN068U1-nrHh3QKnnEGtZbY'
+}
+  fetch(url,{
 
 method: 'POST',
 body: JSON.stringify({
@@ -38,11 +41,11 @@ headers: {
   'Content-Type':'application/json'
 }
   
-}
-  ).then(res =>{
+
+}).then(res =>{
     setIsLoading(false);
 if(res.ok){
-
+return res.json()
 }else{
   return res.json().then((data)=>{
     let errorMessage = 'Authentication failed!';
@@ -50,12 +53,19 @@ if(res.ok){
     //   errorMessage = data.error.message;
     // }
 
-   alert(errorMessage);
+  
+   throw new Error(errorMessage);
   })
 }
-  });
+  })
+  .then((data) => {
+    console.log(data)
+  })
+  .catch((err)=>{
+    alert(err.Message);
+  })
 }
-}
+
   return (
     <section className={classes.auth}>
       <h1>{isLogin ? 'Login' : 'Sign Up'}</h1>
